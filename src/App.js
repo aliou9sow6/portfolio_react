@@ -16,6 +16,7 @@ function App() {
           rel="noopener noreferrer"
         >
           Learn React
+          <h1>Groupe 4 portfolio avec React</h1>
         </a>
       </header>
     </div>
