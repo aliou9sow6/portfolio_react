@@ -1,24 +1,52 @@
-import logo from './logo.svg';
-import './styles/App.css';
+import React, { useState } from 'react';
+import Dossier from './components/Dossier';
 
 function App() {
+  const [vue, setVue] = useState('liste'); // 'liste' | 'detail' | 'editer'
+  const [projetSelectionne, setProjetSelectionne] = useState(null);
+
+  const afficherDetail = (projet) => {
+    setProjetSelectionne(projet);
+    setVue('detail');
+  };
+
+  const afficherEdition = (projet) => {
+    setProjetSelectionne(projet);
+    setVue('editer');
+  };
+
+  const retourListe = () => {
+    setProjetSelectionne(null);
+    setVue('liste');
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          {/* Edit <code>src/App.js</code> and save to reload. */}
-        </p>
-        <h1>Groupe 4 portfolio avec React</h1>
-        <a
-          className="App-link"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-            Consulter les profils de notre équipe
-        </a>
+    <div className="app">
+      <header className="app-header">
+        <div className="header-inner">
+          <div className="logo" onClick={retourListe} style={{ cursor: 'pointer' }}>
+            <span className="logo-dot" />
+            <span className="logo-text">Portfolio</span>
+          </div>
+          <nav className="header-nav">
+            <span className="nav-label">Gestion de Projets</span>
+          </nav>
+        </div>
       </header>
+
+      <main className="app-main">
+        <Dossier
+          vue={vue}
+          projetSelectionne={projetSelectionne}
+          onAfficherDetail={afficherDetail}
+          onAfficherEdition={afficherEdition}
+          onRetourListe={retourListe}
+        />
+      </main>
+
+      <footer className="app-footer">
+        <span>© 2024 Portfolio · Propulsé par React &amp; json-server</span>
+      </footer>
     </div>
   );
 }
