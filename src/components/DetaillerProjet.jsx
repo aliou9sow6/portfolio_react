@@ -1,88 +1,54 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 function DetaillerProjet({ projet, onAnnuler, onEditer, onSupprimer }) {
-  const [imgError, setImgError] = useState(false);
-  const placeholder = `https://placehold.co/1200x600/1a1a2e/6c63ff?text=${encodeURIComponent(projet.libelle)}`;
-
   return (
-    <div className="detail-wrapper">
-      {/* Bouton retour */}
-      <button className="btn-retour" onClick={onAnnuler}>
-        ← Retour à la liste
+    <div className="detail-projet">
+      <button className="btn btn-retour" onClick={onAnnuler}>
+        ← Retour aux projets
       </button>
 
-      <article className="detail-carte">
-        {/* Image grande */}
+      <div className="detail-entete">
+        <h1 className="detail-titre">{projet.libelle}</h1>
+        <div className="detail-badges">
+          {projet.technologies?.map((tech) => (
+            <span key={tech} className="tech-badge">{tech}</span>
+          ))}
+        </div>
+      </div>
+
+      {projet.image && (
         <div className="detail-image-wrapper">
-          <img
-            src={imgError ? placeholder : (projet.image || placeholder)}
-            alt={projet.libelle}
-            className="detail-image"
-            onError={() => setImgError(true)}
-          />
-          <div className="detail-image-overlay" />
-          <h1 className="detail-libelle-overlay">{projet.libelle}</h1>
+          <img src={projet.image} alt={projet.libelle} className="detail-image" />
         </div>
+      )}
 
-        {/* Contenu */}
-        <div className="detail-contenu">
-          <div className="detail-meta">
-            {projet.dateCreation && (
-              <span className="detail-date">
-                📅 {new Date(projet.dateCreation).toLocaleDateString('fr-FR', {
-                  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-                })}
-              </span>
-            )}
-            {projet.lien && (
-              <a
-                href={projet.lien}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="detail-lien"
-              >
-                🔗 Voir le projet
-              </a>
-            )}
-          </div>
+      <div className="detail-corps">
+        {projet.description ? (
+          <p className="detail-description">{projet.description}</p>
+        ) : (
+          <p className="detail-description detail-description-vide">Pas de description fournie.</p>
+        )}
 
-          {/* Description */}
-          {projet.description && (
-            <div className="detail-section">
-              <h2 className="detail-section-titre">Description</h2>
-              <p className="detail-description">{projet.description}</p>
-            </div>
+        <div className="detail-meta">
+          {projet.dateCreation && (
+            <span className="detail-date">Créé le {new Date(projet.dateCreation).toLocaleDateString('fr-FR')}</span>
           )}
-
-          {/* Technologies */}
-          {projet.technologies && projet.technologies.length > 0 && (
-            <div className="detail-section">
-              <h2 className="detail-section-titre">Technologies utilisées</h2>
-              <div className="detail-techs">
-                {projet.technologies.map((tech) => (
-                  <span key={tech} className="tech-badge tech-badge-lg">{tech}</span>
-                ))}
-              </div>
-            </div>
+          {projet.lien && (
+            <a href={projet.lien} target="_blank" rel="noreferrer" className="btn btn-lien">
+              Voir le projet
+            </a>
           )}
         </div>
+      </div>
 
-        {/* Actions */}
-        <div className="detail-actions">
-          <button className="btn btn-annuler" onClick={onAnnuler}>
-            Annuler
-          </button>
-          <button
-            className="btn btn-supprimer"
-            onClick={() => onSupprimer(projet.id)}
-          >
-            Supprimer
-          </button>
-          <button className="btn btn-editer" onClick={onEditer}>
-            ✎ Éditer
-          </button>
-        </div>
-      </article>
+      <div className="detail-actions">
+        <button className="btn btn-editer" onClick={() => onEditer(projet)}>
+          Modifier
+        </button>
+        <button className="btn btn-supprimer" onClick={() => onSupprimer(projet.id)}>
+          Supprimer
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,21 +1,47 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getProjets, addProjet, deleteProjet, updateProjet } from '../services/api';
 import Projet from './Projet';
 import AjouterProjet from './AjouterProjet';
 import DetaillerProjet from './DetaillerProjet';
 import EditerProjet from './EditerProjet';
 
-function Dossier({ vue, projetSelectionne, onAfficherDetail, onAfficherEdition, onRetourListe }) {
+function Dossier() {
   const [projets, setProjets] = useState([]);
   const [recherche, setRecherche] = useState('');
   const [chargement, setChargement] = useState(true);
   const [erreur, setErreur] = useState(null);
   const [notification, setNotification] = useState(null);
+  const [vue, setVue] = useState('liste');
+  const [projetSelectionne, setProjetSelectionne] = useState(null);
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   // Chargement initial des projets
   useEffect(() => {
     chargerProjets();
   }, []);
+
+  useEffect(() => {
+    if (!id) {
+      if (vue !== 'editer') {
+        setProjetSelectionne(null);
+        setVue('liste');
+      }
+      return;
+    }
+
+    if (projets.length === 0) return;
+
+    const projet = projets.find((p) => String(p.id) === String(id));
+    if (projet) {
+      setProjetSelectionne(projet);
+      setVue('detail');
+    } else {
+      setProjetSelectionne(null);
+      setVue('liste');
+    }
+  }, [id, projets]);
 
   const chargerProjets = async () => {
     try {
@@ -35,6 +61,19 @@ function Dossier({ vue, projetSelectionne, onAfficherDetail, onAfficherEdition, 
     setTimeout(() => setNotification(null), 3000);
   };
 
+  const afficherDetail = (projet) => {
+    navigate(`/projets/${projet.id}`);
+  };
+
+  const afficherEdition = (projet) => {
+    setProjetSelectionne(projet);
+    setVue('editer');
+  };
+
+  const retourListe = () => {
+    navigate('/projets');
+  };
+
   // Ajouter un projet
   const handleAjouter = async (nouveauProjet) => {
     try {
@@ -50,26 +89,28 @@ function Dossier({ vue, projetSelectionne, onAfficherDetail, onAfficherEdition, 
   };
 
   // Supprimer un projet
-  const handleSupprimer = async (id) => {
-    const projet = projets.find((p) => p.id === id);
+  const handleSupprimer = async (idProjet) => {
+    const projet = projets.find((p) => p.id === idProjet);
     if (!window.confirm(`Supprimer le projet "${projet?.libelle}" ?`)) return;
     try {
-      await deleteProjet(id);
-      setProjets((prev) => prev.filter((p) => p.id !== id));
+      await deleteProjet(idProjet);
+      setProjets((prev) => prev.filter((p) => p.id !== idProjet));
       afficherNotification(`✓ Projet supprimé`);
-      if (projetSelectionne?.id === id) onRetourListe();
+      if (String(projetSelectionne?.id) === String(idProjet)) {
+        retourListe();
+      }
     } catch (err) {
       afficherNotification('✗ Erreur lors de la suppression', 'erreur');
     }
   };
 
   // Modifier un projet
-  const handleModifier = async (id, donneesModifiees) => {
+  const handleModifier = async (idProjet, donneesModifiees) => {
     try {
-      const projetMaj = await updateProjet(id, donneesModifiees);
-      setProjets((prev) => prev.map((p) => (p.id === id ? projetMaj : p)));
+      const projetMaj = await updateProjet(idProjet, donneesModifiees);
+      setProjets((prev) => prev.map((p) => (p.id === idProjet ? projetMaj : p)));
       afficherNotification(`✓ Projet "${projetMaj.libelle}" modifié avec succès`);
-      onRetourListe();
+      retourListe();
     } catch (err) {
       afficherNotification('✗ Erreur lors de la modification', 'erreur');
     }
@@ -86,8 +127,8 @@ function Dossier({ vue, projetSelectionne, onAfficherDetail, onAfficherEdition, 
     return (
       <DetaillerProjet
         projet={projetSelectionne}
-        onAnnuler={onRetourListe}
-        onEditer={() => onAfficherEdition(projetSelectionne)}
+        onAnnuler={retourListe}
+        onEditer={() => afficherEdition(projetSelectionne)}
         onSupprimer={handleSupprimer}
       />
     );
@@ -99,7 +140,7 @@ function Dossier({ vue, projetSelectionne, onAfficherDetail, onAfficherEdition, 
       <EditerProjet
         projet={projetSelectionne}
         onValider={(donnees) => handleModifier(projetSelectionne.id, donnees)}
-        onAnnuler={onRetourListe}
+        onAnnuler={retourListe}
       />
     );
   }
@@ -167,7 +208,7 @@ function Dossier({ vue, projetSelectionne, onAfficherDetail, onAfficherEdition, 
               key={projet.id}
               projet={projet}
               onSupprimer={handleSupprimer}
-              onAfficherDetail={onAfficherDetail}
+              onAfficherDetail={afficherDetail}
             />
           ))}
         </div>
