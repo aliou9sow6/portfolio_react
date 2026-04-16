@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Projet({ projet, onSupprimer, onAfficherDetail }) {
   const [imgError, setImgError] = useState(false);
@@ -21,16 +22,9 @@ function Projet({ projet, onSupprimer, onAfficherDetail }) {
       {/* Corps */}
       <div className="projet-corps">
         {/* Libellé — ancre cliquable */}
-        <a
-          href="#detail"
-          className="projet-libelle"
-          onClick={(e) => {
-            e.preventDefault();
-            onAfficherDetail(projet);
-          }}
-        >
+        <Link to={`/projets/${projet.id}`} className="projet-libelle">
           {projet.libelle}
-        </a>
+        </Link>
 
         {/* Description courte */}
         {projet.description && (
