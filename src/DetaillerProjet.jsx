@@ -87,4 +87,5 @@ function DetaillerProjet({ projet, onAnnuler, onEditer, onSupprimer }) {
   );
 }
 
+
 export default DetaillerProjet;
