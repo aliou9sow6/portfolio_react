@@ -1,16 +1,22 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+
 
 function Accueil() {
   return (
     <div className="accueil">
       <section className="hero">
-        <h1 className="hero-titre">Bienvenue sur mon Portfolio</h1>
+        <h1 className="hero-titre">Bienvenue sur notre Portfolio</h1>
         <p className="hero-sous-titre">
-          Découvrez mes projets et réalisations en développement web et mobile.
+          Découvrez les projets passionnants que nous avons réalisés et rencontrez notre équipe talentueuse. Nous sommes fiers de partager notre travail et notre expertise avec vous.
         </p>
         <div className="hero-actions">
-          <a href="#projets" className="btn btn-principal" onClick={(e) => { e.preventDefault(); }}>Voir nos projets</a>
-          <a href="#contact" className="btn btn-secondaire" onClick={(e) => { e.preventDefault(); }}>Nous contacter</a>
+          <Link to="/team" className="btn btn-principal">
+            Notre équipe
+          </Link>
+          <Link to="/contact" className="btn btn-secondaire">
+            Me contacter
+          </Link>
         </div>
       </section>
 
