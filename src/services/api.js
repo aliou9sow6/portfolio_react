@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3002/projets';
+const API_URL = 'http://localhost:3001/projets';
 
 // Récupérer tous les projets
 export async function getProjets() {
@@ -20,7 +20,7 @@ export async function addProjet(projet) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(projet),
-  });
+  });  
   if (!res.ok) throw new Error("Erreur lors de l'ajout du projet");
   return res.json();
 }
