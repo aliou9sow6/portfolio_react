@@ -24,10 +24,8 @@ function Dossier() {
 
   useEffect(() => {
     if (!id) {
-      if (vue !== 'editer') {
-        setProjetSelectionne(null);
-        setVue('liste');
-      }
+      setProjetSelectionne(null);
+      setVue('liste');
       return;
     }
 
