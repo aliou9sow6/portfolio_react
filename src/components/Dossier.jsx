@@ -65,6 +65,10 @@ function Dossier() {
     navigate(`/projets/${projet.id}`);
   };
 
+  const afficherAjouter = () => {
+    setVue('ajouter');
+  };
+
   const afficherEdition = (projet) => {
     setProjetSelectionne(projet);
     setVue('editer');
@@ -83,6 +87,7 @@ function Dossier() {
       });
       setProjets((prev) => [...prev, projetCree]);
       afficherNotification(`✓ Projet "${projetCree.libelle}" ajouté avec succès`);
+      setVue('liste');
     } catch (err) {
       afficherNotification("✗ Erreur lors de l'ajout du projet", 'erreur');
     }
@@ -121,6 +126,16 @@ function Dossier() {
     p.libelle.toLowerCase().includes(recherche.toLowerCase()) ||
     (p.description && p.description.toLowerCase().includes(recherche.toLowerCase()))
   );
+
+  // Affichage formulaire ajout
+  if (vue === 'ajouter') {
+    return (
+      <AjouterProjet
+        onAjouter={handleAjouter}
+        onAnnuler={() => setVue('liste')}
+      />
+    );
+  }
 
   // Affichage détail
   if (vue === 'detail' && projetSelectionne) {
@@ -162,24 +177,28 @@ function Dossier() {
           <span className="dossier-count">{projets.length} projet{projets.length !== 1 ? 's' : ''}</span>
         </div>
 
-        {/* Barre de recherche */}
-        <div className="recherche-wrapper">
-          <span className="recherche-icon">⌕</span>
-          <input
-            type="text"
-            className="recherche-input"
-            placeholder="Rechercher un projet..."
-            value={recherche}
-            onChange={(e) => setRecherche(e.target.value)}
-          />
-          {recherche && (
-            <button className="recherche-clear" onClick={() => setRecherche('')}>✕</button>
-          )}
+        <div className="dossier-header-actions">
+          {/* Barre de recherche */}
+          <div className="recherche-wrapper">
+            <span className="recherche-icon">⌕</span>
+            <input
+              type="text"
+              className="recherche-input"
+              placeholder="Rechercher un projet..."
+              value={recherche}
+              onChange={(e) => setRecherche(e.target.value)}
+            />
+            {recherche && (
+              <button className="recherche-clear" onClick={() => setRecherche('')}>✕</button>
+            )}
+          </div>
+
+          {/* Bouton nouveau projet */}
+          <button className="btn btn-ajouter-toggle" onClick={afficherAjouter}>
+            <span className="btn-plus">+</span> Nouveau projet
+          </button>
         </div>
       </div>
-
-      {/* Formulaire ajout */}
-      <AjouterProjet onAjouter={handleAjouter} />
 
       {/* Erreur */}
       {erreur && (
